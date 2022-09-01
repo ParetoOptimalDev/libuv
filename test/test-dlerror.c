@@ -43,7 +43,8 @@ TEST_IMPL(dlerror) {
   msg = uv_dlerror(&lib);
   ASSERT_NOT_NULL(msg);
 #if !defined(__OpenBSD__) && !defined(__QNX__)
-  ASSERT_NOT_NULL(strstr(msg, path));
+  if (NULL == strstr(msg, "Dynamic loading not supported"))
+    ASSERT_NOT_NULL(strstr(msg, path));
 #endif
   ASSERT_NULL(strstr(msg, dlerror_no_error));
 
