@@ -50,7 +50,11 @@ TEST_IMPL(dlerror) {
   /* Should return the same error twice in a row. */
   msg = uv_dlerror(&lib);
   ASSERT_NOT_NULL(msg);
-#if !defined(__OpenBSD__) && !defined(__QNX__)
+#if defined(__linux__)
+  /* musl's libc.a does not support dlopen(), only libc.so does. */
+  if (NULL == strstr(msg, "Dynamic loading not supported"))
+    ASSERT_NOT_NULL(strstr(msg, path));
+#elif !defined(__OpenBSD__) && !defined(__QNX__)
   ASSERT_NOT_NULL(strstr(msg, path));
 #endif
   ASSERT_NULL(strstr(msg, dlerror_no_error));
